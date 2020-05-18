@@ -39,6 +39,8 @@ set cursorline           " 高亮显示当前行
 set whichwrap+=<,>,h,l   " 设置光标键跨行
 set ttimeoutlen=0        " 设置<ESC>键响应时间
 set virtualedit=block,onemore   " 允许光标出现在最后一个字符的后面
+set mouse=a              " 启用鼠标
+set cursorcolumn         " 高亮光标所在的行/列
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 代码缩进和排版
@@ -95,9 +97,9 @@ set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 if has("gui_running")
     let system = system('uname -s')
     if system == "Darwin\n"
-        set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h18 " 设置字体
+        set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h10 " 设置字体
     else
-        set guifont=DroidSansMono\ Nerd\ Font\ Regular\ 18      " 设置字体
+        set guifont=DroidSansMono\ Nerd\ Font\ Regular\ 10      " 设置字体
     endif
     set guioptions-=m           " 隐藏菜单栏
     set guioptions-=T           " 隐藏工具栏
@@ -106,6 +108,7 @@ if has("gui_running")
     set guioptions-=b           " 隐藏底部滚动条
     set showtabline=0           " 隐藏Tab栏
     set guicursor=n-v-c:ver5    " 设置光标为竖线
+    set lines=40 columns=180
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -223,14 +226,19 @@ let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
 
 " cpp-mode
-nnoremap <leader>y :CopyCode<cr>
-nnoremap <leader>p :PasteCode<cr>
-nnoremap <leader>U :GoToFunImpl<cr>
-nnoremap <silent> <leader>a :Switch<cr>
-nnoremap <leader><leader>fp :FormatFunParam<cr>
-nnoremap <leader><leader>if :FormatIf<cr>
-nnoremap <leader><leader>t dd :GenTryCatch<cr>
-xnoremap <leader><leader>t d :GenTryCatch<cr>
+" nnoremap <leader>y :CopyCode<cr>
+" nnoremap <leader>p :PasteCode<cr>
+" nnoremap <leader>U :GoToFunImpl<cr>
+" nnoremap <silent> <leader>a :Switch<cr>
+" nnoremap <leader><leader>fp :FormatFunParam<cr>
+" nnoremap <leader><leader>if :FormatIf<cr>
+" nnoremap <leader><leader>t dd :GenTryCatch<cr>
+" xnoremap <leader><leader>t d :GenTryCatch<cr>
+
+nnoremap <leader>p "0p
+vnoremap <leader>p "0p
+" nnoremap <leader><leader>p viw"0p
+" nnoremap <leader>y "0y
 
 " change-colorscheme
 nnoremap <silent> <F9> :PreviousColorScheme<cr>
@@ -264,8 +272,8 @@ let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
 let g:NERDTreeHighlightFolders = 1         
 let g:NERDTreeHighlightFoldersFullName = 1 
-let g:NERDTreeDirArrowExpandable='▷'
-let g:NERDTreeDirArrowCollapsible='▼'
+let g:NERDTreeDirArrowExpandable=' ▷'
+let g:NERDTreeDirArrowCollapsible='▼ '
 
 " YCM
 " 如果不指定python解释器路径，ycm会自己搜索一个合适的(与编译ycm时使用的python版本匹配)
@@ -294,12 +302,24 @@ nnoremap <leader>u :YcmCompleter GoToDeclaration<cr>
 " 已经使用cpp-mode插件提供的转到函数实现的功能
 " nnoremap <leader>i :YcmCompleter GoToDefinition<cr> 
 nnoremap <leader>o :YcmCompleter GoToInclude<cr>
-nnoremap <leader>ff :YcmCompleter FixIt<cr>
-nmap <F5> :YcmDiags<cr>
+" nnoremap <leader>ff :YcmCompleter FixIt<cr>
+" nmap <F5> :YcmDiags<cr>
+
+" 支持F5自动运行代码
+map <F5> :call RunPython()<CR>
+func! RunPython()
+    exec "W"
+    if &filetype == 'python'
+        exec "!time python3 %"
+    endif
+endfunc
+
 
 " tagbar
-let g:tagbar_width = 30
+let g:tagbar_width = 45
+let g:tagbar_left = 1
 nnoremap <silent> <leader>t :TagbarToggle<cr>
+
 
 " incsearch.vim
 map /  <Plug>(incsearch-forward)
@@ -326,12 +346,16 @@ let g:NERDTreeIndicatorMapCustom = {
             \ }
 
 " LeaderF
-nnoremap <leader>f :LeaderfFile ~<cr>
+nnoremap <leader>ff :LeaderfFile<cr>
+nnoremap <leader>fg :LeaderfTag<cr>
+nnoremap <leader>ft :LeaderfBufTag<cr>
+nnoremap <leader>m :LeaderfFunction<cr>
 let g:Lf_WildIgnore = {
             \ 'dir': ['.svn','.git','.hg','.vscode','.wine','.deepinwine','.oh-my-zsh'],
             \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
             \}
 let g:Lf_UseCache = 0
+" let g:Lf_UseVersionControlTool = 0
 
 " ack
 nnoremap <leader>F :Ack!<space>
@@ -353,6 +377,41 @@ noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 nnoremap <leader>g :GV<cr>
 nnoremap <leader>G :GV!<cr>
 nnoremap <leader>gg :GV?<cr>
+
+" 设置cscope环境
+set cscopequickfix=s-,c-,d-,i-,t-,e-
+set cscopetag
+set csto=0
+cs add cscope.out
+
+nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+
+nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
 
 " 加载自定义配置
 if filereadable(expand($HOME . '/.vimrc.custom.config'))
