@@ -132,37 +132,37 @@ Plug 'chxuan/change-colorscheme'
 Plug 'chxuan/prepare-code'
 Plug 'chxuan/vim-buffer'
 Plug 'chxuan/vimplus-startify'
-Plug 'chxuan/tagbar'
+Plug 'chxuan/tagbar'                            "文件Tag列表
 Plug 'Valloric/YouCompleteMe'
-Plug 'Yggdroot/LeaderF'
+Plug 'Yggdroot/LeaderF'                         "模糊搜索
 Plug 'mileszs/ack.vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'haya14busa/incsearch.vim'
-Plug 'jiangmiao/auto-pairs'
-Plug 'scrooloose/nerdtree'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'easymotion/vim-easymotion'                "快速跳转
+Plug 'haya14busa/incsearch.vim'                 "vim增量搜索支持
+Plug 'jiangmiao/auto-pairs'                     "自动匹配成对符号[] () {}等
+Plug 'scrooloose/nerdtree'                      "文件树支持
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'  "nerdtree语法、高亮显示支持
+Plug 'Xuyuanp/nerdtree-git-plugin'              "nerdtree显示文件git状态
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-endwise'                        "自动完成某些语法结构，如#if #endif
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline'                  "状态栏自定义支持
 Plug 'vim-airline/vim-airline-themes'
-Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/vim-slash'
+Plug 'ryanoasis/vim-devicons'                   "为插件添加文件类型图标
+" Plug 'junegunn/vim-slash'                     "搜索后自动取消高亮
 Plug 'junegunn/gv.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-indent'
-Plug 'kana/vim-textobj-syntax'
-Plug 'kana/vim-textobj-function'
-Plug 'sgur/vim-textobj-parameter'
-Plug 'Shougo/echodoc.vim'
-Plug 'terryma/vim-smooth-scroll'
-Plug 'rhysd/clever-f.vim'
-Plug 'vim-scripts/indentpython.vim'
+Plug 'kana/vim-textobj-user'                    "创建自定义的文件对象
+Plug 'kana/vim-textobj-indent'                  "缩进
+Plug 'kana/vim-textobj-syntax'                  "语法
+Plug 'kana/vim-textobj-function'                "vif,viF(vaf),yif,yaf,dif,daf 等函数文本对象操作支持
+Plug 'sgur/vim-textobj-parameter'               "提供函数参数的文本对象操作支持
+Plug 'Shougo/echodoc.vim'                       "命令行显示完成的功能选项（如：函数已经填写的参数）
+Plug 'terryma/vim-smooth-scroll'                "vim平滑滚动(翻页)
+Plug 'rhysd/clever-f.vim'                       "f,F,t,T 功能映射，快速跳转
+Plug 'vim-scripts/indentpython.vim'             "python自动缩进支持
 
 " 加载自定义插件
 if filereadable(expand($HOME . '/.vimrc.custom.plugins'))
@@ -308,7 +308,7 @@ nnoremap <leader>o :YcmCompleter GoToInclude<cr>
 " 支持F5自动运行代码
 map <F5> :call RunPython()<CR>
 func! RunPython()
-    exec "W"
+    exec "w"
     if &filetype == 'python'
         exec "!time python3 %"
     endif
@@ -368,10 +368,10 @@ nnoremap <leader>l :Tab /\|<cr>
 nnoremap <leader>= :Tab /=<cr>
 
 " vim-smooth-scroll
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 3)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 3)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 10, 6)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 10, 6)<CR>
 
 " gv
 nnoremap <leader>g :GV<cr>
@@ -411,7 +411,8 @@ nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
 
-
+"取消高亮显示
+map <leader>q :nohl<CR>
 
 " 加载自定义配置
 if filereadable(expand($HOME . '/.vimrc.custom.config'))
