@@ -40,7 +40,7 @@ set whichwrap+=<,>,h,l   " 设置光标键跨行
 set ttimeoutlen=0        " 设置<ESC>键响应时间
 set virtualedit=block,onemore   " 允许光标出现在最后一个字符的后面
 set mouse=a              " 启用鼠标
-set cursorcolumn         " 高亮光标所在的行/列
+" set cursorcolumn         " 高亮光标所在的行/列
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 代码缩进和排版
@@ -59,6 +59,8 @@ set nowrap               " 禁止折行
 set backspace=2          " 使用回车键正常处理indent,eol,start等
 set sidescroll=10        " 设置向右滚动字符数
 set nofoldenable         " 禁用折叠代码
+"set noexpandtab         " 不要用空格代替制表符
+set fileformats=unix,dos " 自动识别UNIX格式和MS-DOS格式
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 代码补全
@@ -92,6 +94,14 @@ set encoding=utf8
 set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim持久撤销
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has('persistent_undo')           "check if your vim version supports it
+    set undofile                    "turn on the feature  
+    set undodir=$HOME/.vimplus/undoDir     "directory where the undo files will be stored
+endif  
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " gvim/macvim设置
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("gui_running")
@@ -107,7 +117,8 @@ if has("gui_running")
     set guioptions-=r           " 隐藏右侧滚动条
     set guioptions-=b           " 隐藏底部滚动条
     set showtabline=0           " 隐藏Tab栏
-    set guicursor=n-v-c:ver5    " 设置光标为竖线
+    " set guicursor=n-v-c:ver5    " 设置光标为竖线
+    set gcr=a:block-blinkon0    " 设置块光标，不闪烁
     set lines=40 columns=180
 endif
 
@@ -133,9 +144,10 @@ Plug 'chxuan/prepare-code'
 Plug 'chxuan/vim-buffer'
 Plug 'chxuan/vimplus-startify'
 Plug 'chxuan/tagbar'                            "文件Tag列表
-Plug 'Valloric/YouCompleteMe'
-Plug 'Yggdroot/LeaderF'                         "模糊搜索
-Plug 'mileszs/ack.vim'
+" Plug 'Valloric/YouCompleteMe'
+Plug 'ycm-core/YouCompleteMe'
+Plug 'Yggdroot/LeaderF'                         "文件名称模糊搜索
+Plug 'mileszs/ack.vim'                          "全局搜索
 Plug 'easymotion/vim-easymotion'                "快速跳转
 Plug 'haya14busa/incsearch.vim'                 "vim增量搜索支持
 Plug 'jiangmiao/auto-pairs'                     "自动匹配成对符号[] () {}等
@@ -144,11 +156,12 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'  "nerdtree语法、高亮显示�
 Plug 'Xuyuanp/nerdtree-git-plugin'              "nerdtree显示文件git状态
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'                       "支持 di) ci) vi)等快速选中
+Plug 'tpope/vim-commentary'                     "注释功能支持
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-endwise'                        "自动完成某些语法结构，如#if #endif
-Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'octol/vim-cpp-enhanced-highlight'         "C++语法高亮
+" Plug 'dense-analysis/ale'                     "语法异步检查
 Plug 'vim-airline/vim-airline'                  "状态栏自定义支持
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'                   "为插件添加文件类型图标
@@ -160,9 +173,13 @@ Plug 'kana/vim-textobj-syntax'                  "语法
 Plug 'kana/vim-textobj-function'                "vif,viF(vaf),yif,yaf,dif,daf 等函数文本对象操作支持
 Plug 'sgur/vim-textobj-parameter'               "提供函数参数的文本对象操作支持
 Plug 'Shougo/echodoc.vim'                       "命令行显示完成的功能选项（如：函数已经填写的参数）
-Plug 'terryma/vim-smooth-scroll'                "vim平滑滚动(翻页)
+" Plug 'terryma/vim-smooth-scroll'                "vim平滑滚动(翻页)
 Plug 'rhysd/clever-f.vim'                       "f,F,t,T 功能映射，快速跳转
 Plug 'vim-scripts/indentpython.vim'             "python自动缩进支持
+Plug 'airblade/vim-gitgutter'                   
+Plug 'lfv89/vim-interestingwords'               "高亮显示单词
+" Plug 'frazrepo/vim-rainbow'                     "用色彩区分匹配的括号
+
 
 " 加载自定义插件
 if filereadable(expand($HOME . '/.vimrc.custom.plugins'))
@@ -210,13 +227,22 @@ autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "
 
 " 主题设置
 set background=dark
+" let g:solarized_termcolors=256  
+" colorscheme solarized
+
 let g:onedark_termcolors=256
 colorscheme onedark
+
+" let g:monokai_termcolors=256  
+" colorscheme monokai
 
 " airline
 let g:airline_theme="onedark"
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
@@ -224,6 +250,19 @@ let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
+
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <leader>- <Plug>AirlineSelectPrevTab
+nmap <leader>+ <Plug>AirlineSelectNextTab
 
 " cpp-mode
 " nnoremap <leader>y :CopyCode<cr>
@@ -278,13 +317,13 @@ let g:NERDTreeDirArrowCollapsible='▼ '
 " YCM
 " 如果不指定python解释器路径，ycm会自己搜索一个合适的(与编译ycm时使用的python版本匹配)
 " let g:ycm_server_python_interpreter = '/usr/bin/python2.7'
-let g:ycm_confirm_extra_conf = 0 
+let g:ycm_confirm_extra_conf = 0
 let g:ycm_error_symbol = '✗'
 let g:ycm_warning_symbol = '✹'
-let g:ycm_seed_identifiers_with_syntax = 1 
-let g:ycm_complete_in_comments = 1 
-let g:ycm_complete_in_strings = 1 
-let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1              " 语法关键字补全
+let g:ycm_complete_in_comments = 1                      " 注释支持补全
+let g:ycm_complete_in_strings = 1                       " 字符串支持补全
+let g:ycm_collect_identifiers_from_tags_files = 1       " 开启 YCM基于标签引擎
 let g:ycm_semantic_triggers =  {
             \   'c' : ['->', '.','re![_a-zA-z0-9]'],
             \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -313,6 +352,14 @@ func! RunPython()
         exec "!time python3 %"
     endif
 endfunc
+
+" 支持F8自动运行代码
+map <F8> :call RunGitgutter()<CR>
+func! RunGitgutter()
+    exec "w"
+    exec "GitGutterEnable"
+endfunc
+
 
 
 " tagbar
@@ -352,7 +399,7 @@ nnoremap <leader>ft :LeaderfBufTag<cr>
 nnoremap <leader>m :LeaderfFunction<cr>
 let g:Lf_WildIgnore = {
             \ 'dir': ['.svn','.git','.hg','.vscode','.wine','.deepinwine','.oh-my-zsh'],
-            \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+            \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]','*.bmp','*.jpg']
             \}
 let g:Lf_UseCache = 0
 " let g:Lf_UseVersionControlTool = 0
@@ -368,10 +415,10 @@ nnoremap <leader>l :Tab /\|<cr>
 nnoremap <leader>= :Tab /=<cr>
 
 " vim-smooth-scroll
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 3)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 3)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 10, 6)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 10, 6)<CR>
+" noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 3)<CR>
+" noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 3)<CR>
+" noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 10, 6)<CR>
+" noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 10, 6)<CR>
 
 " gv
 nnoremap <leader>g :GV<cr>
@@ -414,8 +461,37 @@ nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
 "取消高亮显示
 map <leader>q :nohl<CR>
 
-let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+" let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+" let g:ycm_global_ycm_extra_conf='~/.ycm_extra_conf.py'
 
+" 
+let g:cpp_experimental_simple_template_highlight=1
+" let g:cpp_class_scope_highlight=1
+let g:cpp_member_variable_highlight=1
+" let g:cpp_class_decl_highlight=1
+" let g:cpp_experimental_simple_template_highlight=1
+" let g:cpp_experimental_template_highlight=1
+" let g:cpp_concepts_highlight=1
+" let g:cpp_no_function_highlight=1
+
+" gitgutter 配置
+let g:gitgutter_enabled = 1
+let g:gitgutter_highlight_lines = 0
+let g:gitgutter_async = 0
+
+"vim-interestingwords配置
+nnoremap <silent> <leader>k :call InterestingWords('n')<cr>
+nnoremap <silent> <leader>K :call UncolorAllWords()<cr>
+
+nnoremap <silent> n :call WordNavigation('forward')<cr>
+nnoremap <silent> N :call WordNavigation('backward')<cr>
+
+let g:interestingWordsGUIColors = ['#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272','#FFB3FF', '#9999FF']
+let g:interestingWordsTermColors = ['154', '121', '211', '137', '214', '222']
+" let g:interestingWordsRandomiseColors = 1
+
+" vim-rainbow配置
+let g:rainbow_active = 1
 
 " 加载自定义配置
 if filereadable(expand($HOME . '/.vimrc.custom.config'))
