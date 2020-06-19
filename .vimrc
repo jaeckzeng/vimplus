@@ -233,11 +233,15 @@ set background=dark
 " let g:onedark_termcolors=256
 " colorscheme onedark
 
-let g:monokai_termcolors=256  
-colorscheme monokai
+" let g:monokai_termcolors=256  
+" colorscheme monokai
+
+let g:molokai_termcolors=256  
+colorscheme molokai
 
 " airline
-let g:airline_theme="onedark"
+let g:airline_theme="molokai"
+" let g:airline_theme="onedark"
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 " let g:airline#extensions#tabline#buffer_nr_show = 1
