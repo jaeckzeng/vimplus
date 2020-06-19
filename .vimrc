@@ -230,11 +230,11 @@ set background=dark
 " let g:solarized_termcolors=256  
 " colorscheme solarized
 
-let g:onedark_termcolors=256
-colorscheme onedark
+" let g:onedark_termcolors=256
+" colorscheme onedark
 
-" let g:monokai_termcolors=256  
-" colorscheme monokai
+let g:monokai_termcolors=256  
+colorscheme monokai
 
 " airline
 let g:airline_theme="onedark"
