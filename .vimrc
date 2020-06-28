@@ -61,6 +61,7 @@ set sidescroll=10        " 设置向右滚动字符数
 set nofoldenable         " 禁用折叠代码
 "set noexpandtab         " 不要用空格代替制表符
 set fileformats=unix,dos " 自动识别UNIX格式和MS-DOS格式
+" set fileformats=unix     " 自动识别UNIX格式和MS-DOS格式
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 代码补全
@@ -233,15 +234,15 @@ set background=dark
 " let g:onedark_termcolors=256
 " colorscheme onedark
 
-" let g:monokai_termcolors=256  
-" colorscheme monokai
+let g:monokai_termcolors=256  
+colorscheme monokai
 
-let g:molokai_termcolors=256  
-colorscheme molokai
+" let g:molokai_termcolors=256  
+" colorscheme molokai
 
 " airline
-let g:airline_theme="molokai"
-" let g:airline_theme="onedark"
+" let g:airline_theme="molokai"
+let g:airline_theme="onedark"
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 " let g:airline#extensions#tabline#buffer_nr_show = 1
