@@ -108,9 +108,9 @@ endif
 if has("gui_running")
     let system = system('uname -s')
     if system == "Darwin\n"
-        set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h10 " 设置字体
+        set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h12 " 设置字体
     else
-        set guifont=DroidSansMono\ Nerd\ Font\ Regular\ 10      " 设置字体
+        set guifont=DroidSansMono\ Nerd\ Font\ Regular\ 12      " 设置字体
     endif
     set guioptions-=m           " 隐藏菜单栏
     set guioptions-=T           " 隐藏工具栏
@@ -144,6 +144,7 @@ Plug 'chxuan/change-colorscheme'
 Plug 'chxuan/prepare-code'
 Plug 'chxuan/vim-buffer'
 Plug 'chxuan/vimplus-startify'
+" Plug 'mhinz/vim-startify'
 Plug 'chxuan/tagbar'                            "文件Tag列表
 " Plug 'Valloric/YouCompleteMe'
 Plug 'ycm-core/YouCompleteMe'
@@ -181,6 +182,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'lfv89/vim-interestingwords'               "高亮显示单词
 " Plug 'frazrepo/vim-rainbow'                     "用色彩区分匹配的括号
 
+" Plug 'ludovicchabant/vim-gutentags'             " 自动生成Tags文件
 
 " 加载自定义插件
 if filereadable(expand($HOME . '/.vimrc.custom.plugins'))
@@ -234,8 +236,13 @@ set background=dark
 " let g:onedark_termcolors=256
 " colorscheme onedark
 
+if has("gui_running")
 let g:monokai_termcolors=256  
 colorscheme monokai
+else
+let g:onedark_termcolors=256
+colorscheme onedark
+endif
 
 " let g:molokai_termcolors=256  
 " colorscheme molokai
@@ -300,7 +307,8 @@ let g:prepare_code_plugin_path = expand($HOME . "/.vim/plugged/prepare-code")
 " vim-buffer
 nnoremap <silent> <c-p> :PreviousBuffer<cr>
 nnoremap <silent> <c-n> :NextBuffer<cr>
-nnoremap <silent> <leader>d :CloseBuffer<cr>
+" nnoremap <silent> <leader>d :CloseBuffer<cr>
+nnoremap <silent> <leader>d :bdel<cr>
 nnoremap <silent> <leader>D :BufOnly<cr>
 
 " vim-edit
@@ -328,7 +336,7 @@ let g:ycm_warning_symbol = '✹'
 let g:ycm_seed_identifiers_with_syntax = 1              " 语法关键字补全
 let g:ycm_complete_in_comments = 1                      " 注释支持补全
 let g:ycm_complete_in_strings = 1                       " 字符串支持补全
-let g:ycm_collect_identifiers_from_tags_files = 1       " 开启 YCM基于标签引擎
+let g:ycm_collect_identifiers_from_tags_files = 0       " 开启 YCM基于标签引擎
 let g:ycm_semantic_triggers =  {
             \   'c' : ['->', '.','re![_a-zA-z0-9]'],
             \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -350,13 +358,18 @@ nnoremap <leader>o :YcmCompleter GoToInclude<cr>
 " nmap <F5> :YcmDiags<cr>
 
 " 支持F5自动运行代码
-map <F5> :call RunPython()<CR>
+" map <F5> :call RunPython()<CR>
+map <F5> <ESC>:w<CR>
+imap <F5> <ESC>:w<CR>
+
 func! RunPython()
     exec "w"
     if &filetype == 'python'
         exec "!time python3 %"
     endif
 endfunc
+
+map <F6> :cs kill 0<CR>:cs add cscope.out<CR>
 
 " 支持F8自动运行代码
 map <F8> :call RunGitgutter()<CR>
@@ -504,3 +517,27 @@ if filereadable(expand($HOME . '/.vimrc.custom.config'))
 endif
 
 
+
+let g:startify_change_to_vcs_root = 1
+
+"let g:Lf_UseVersionControlTool = 0
+
+" " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+" let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" " 所生成的数据文件的名称
+" let g:gutentags_ctags_tagfile = '.tags'
+
+" " 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" let s:vim_tags = expand('~/.cache/tags')
+" let g:gutentags_cache_dir = s:vim_tags
+
+" " 配置 ctags 的参数
+" let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+" let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+" let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" " 检测 ~/.cache/tags 不存在就新建
+" if !isdirectory(s:vim_tags)
+"    silent! call mkdir(s:vim_tags, 'p')
+" endif
